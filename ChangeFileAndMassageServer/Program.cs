@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -24,31 +25,41 @@ namespace ChangeFileAndMassageServer
 
 
                 clientSocket = socket.Accept();
-                while(true)
+                int byteCount = 0;
+                byte[] buffer = new byte[256];
+                StringBuilder stringBuilder = new StringBuilder();
+                do
                 {
-                    int byteCount = 0;
-                    byte[] buffer = new byte[256];
-                    StringBuilder stringBuilder = new StringBuilder();
-                    do
-                    {
-                        byteCount = clientSocket.Receive(buffer);
-                        stringBuilder.Append(Encoding.Unicode.GetString(buffer, 0, byteCount));
-                    } while (clientSocket.Available > 0);
-                    string msg = stringBuilder.ToString();
-                    if (msg == "/end")
-                    {
-                        clientSocket.Shutdown(SocketShutdown.Send);
-                        clientSocket.Close();
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine($"New msg:\t{stringBuilder.ToString()}");
-                    }
+                    byteCount = clientSocket.Receive(buffer);
+                    stringBuilder.Append(Encoding.Unicode.GetString(buffer, 0, byteCount));
+                } while (clientSocket.Available > 0);
+                File.WriteAllBytes(@"\\Mac\Home\Desktop\test.txt", buffer);
 
-                    
-                }
-                
+                //while(true)
+                //{
+                //    int byteCount = 0;
+                //    byte[] buffer = new byte[256];
+                //    StringBuilder stringBuilder = new StringBuilder();
+                //    do
+                //    {
+                //        byteCount = clientSocket.Receive(buffer);
+                //        stringBuilder.Append(Encoding.Unicode.GetString(buffer, 0, byteCount));
+                //    } while (clientSocket.Available > 0);
+                //    string msg = stringBuilder.ToString();
+                //    if (msg == "/end")
+                //    {
+                //        clientSocket.Shutdown(SocketShutdown.Send);
+                //        clientSocket.Close();
+                //        break;
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine($"New msg:\t{stringBuilder.ToString()}");
+                //    }
+
+
+                //}
+
             }
             catch (Exception ex)
             {
